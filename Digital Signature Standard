@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define P 23
+#define Q 11
+#define G 5
+
+int power(int base, int exponent, int mod) {
+    int result = 1;
+    while (exponent > 0) {
+        if (exponent % 2 == 1) {
+            result = (result * base) % mod;
+        }
+        base = (base * base) % mod;
+        exponent = exponent / 2;
+    }
+    return result;
+}
+
+void generateKeys(int *privateKey, int *publicKey) {
+    *privateKey = rand() % (Q - 1) + 1;
+    *publicKey = power(G, *privateKey, P);
+}
+
+void signMessage(int privateKey, int message, int *r, int *s) {
+    int k = rand() % (Q - 1) + 1;
+    *r = power(G, k, P) % Q;
+    *s = ((message - privateKey * *r) * power(k, Q - 2, Q)) % Q;
+}
+
+int verifySignature(int publicKey, int message, int r, int s) {
+    int v1 = (power(publicKey, r, P) * power(r, s, P)) % P % Q;
+    int v2 = power(G, message, P) % Q;
+    return v1 == v2;
+}
+
+int main() {
+    int privateKey, publicKey;
+    int message = 5;
+    int r, s;
+
+    srand(time(NULL));
+
+    generateKeys(&privateKey, &publicKey);
+    signMessage(privateKey, message, &r, &s);
+
+    printf("Private Key: %d\n", privateKey);
+    printf("Public Key: %d\n", publicKey);
+    printf("Message: %d\n", message);
+    printf("Signature: (r, s) = (%d, %d)\n", r, s);
+
+    if (verifySignature(publicKey, message, r, s)) {
+        printf("Signature verified successfully.\n");
+    } else {
+        printf("Signature verification failed.\n");
+    }
+
+    return 0;
+}
+
+
