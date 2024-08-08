@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <ctype.h>
+
+#define ALPHABET_SIZE 26
+
+// Function to encrypt the plaintext
+void encrypt(char *plaintext, char *key, char *ciphertext) {
+    while (*plaintext) {
+        if (isalpha(*plaintext)) {
+            char base = islower(*plaintext) ? 'a' : 'A';
+            int index = *plaintext - base;
+            ciphertext[plaintext - (char *)key] = key[index];
+        } else {
+            ciphertext[plaintext - (char *)key] = *plaintext;
+        }
+        plaintext++;
+    }
+    ciphertext[plaintext - (char *)key] = '\0';
+}
+
+int main() {
+    char key[ALPHABET_SIZE + 1] = "zyxwvutsrqponmlkjihgfedcba"; // Example key
+    char plaintext[100];
+    char ciphertext[100];
+
+    printf("Enter the plaintext: ");
+    fgets(plaintext, sizeof(plaintext), stdin);
+    
+    // Remove newline character if present
+    plaintext[strcspn(plaintext, "\n")] = '\0';
+
+    encrypt(plaintext, key, ciphertext);
+
+    printf("Encrypted text: %s\n", ciphertext);
+
+    return 0;
+}
