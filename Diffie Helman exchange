@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <math.h>
+
+long long power(long long base, long long exponent, long long mod) {
+    long long result = 1;
+    base = base % mod;
+    while (exponent > 0) {
+        if (exponent % 2 == 1) {
+            result = (result * base) % mod;
+        }
+        exponent = exponent >> 1;
+        base = (base * base) % mod;
+    }
+    return result;
+}
+
+int main() {
+    long long p, g, a, b;
+    long long A, B;
+    long long sharedSecretAlice, sharedSecretBob;
+
+    p = 23;
+    g = 5;
+    a = 6;
+    b = 15;
+
+    A = power(g, a, p);
+    B = power(g, b, p);
+
+    sharedSecretAlice = power(B, a, p);
+    sharedSecretBob = power(A, b, p);
+
+    printf("Prime (p): %lld\n", p);
+    printf("Base (g): %lld\n", g);
+    printf("Alice's private key (a): %lld\n", a);
+    printf("Bob's private key (b): %lld\n", b);
+    printf("Alice's public key (A): %lld\n", A);
+    printf("Bob's public key (B): %lld\n", B);
+    printf("Shared secret computed by Alice: %lld\n", sharedSecretAlice);
+    printf("Shared secret computed by Bob: %lld\n", sharedSecretBob);
+
+    if (sharedSecretAlice == sharedSecretBob) {
+        printf("Key exchange successful! Shared secret is: %lld\n", sharedSecretAlice);
+    } else {
+        printf("Key exchange failed.\n");
+    }
+
+    return 0;
+}
+
