@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <ctype.h>
+
+#define ALPHABET_SIZE 26
+
+// Function to create a decryption map from the key
+void createDecryptionMap(char *key, char *decryptionMap) {
+    for (int i = 0; i < ALPHABET_SIZE; i++) {
+        decryptionMap[key[i] - 'a'] = 'a' + i;
+    }
+}
+
+// Function to decrypt the ciphertext
+void decrypt(char *ciphertext, char *decryptionMap, char *plaintext) {
+    while (*ciphertext) {
+        if (isalpha(*ciphertext)) {
+            char base = islower(*ciphertext) ? 'a' : 'A';
+            int index = tolower(*ciphertext) - 'a';
+            plaintext[ciphertext - (char *)key] = decryptionMap[index];
+            if (isupper(*ciphertext)) {
+                plaintext[ciphertext - (char *)key] = toupper(decryptionMap[index]);
+            }
+        } else {
+            plaintext[ciphertext - (char *)key] = *ciphertext;
+        }
+        ciphertext++;
+    }
+    plaintext[ciphertext - (char *)key] = '\0';
+}
+
+int main() {
+    char key[ALPHABET_SIZE + 1] = "zyxwvutsrqponmlkjihgfedcba"; // Example key
+    char ciphertext[100];
+    char plaintext[100];
+    char decryptionMap[ALPHABET_SIZE];
+
+    printf("Enter the ciphertext: ");
+    fgets(ciphertext, sizeof(ciphertext), stdin);
+    
+    // Remove newline character if present
+    ciphertext[strcspn(ciphertext, "\n")] = '\0';
+
+    createDecryptionMap(key, decryptionMap);
+    decrypt(ciphertext, decryptionMap, plaintext);
+
+    printf("Decrypted text: %s\n", plaintext);
+
+    return 0;
+}
